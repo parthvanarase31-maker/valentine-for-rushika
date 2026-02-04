@@ -183,7 +183,7 @@
 <body>
 
 <!-- 🎵 Music -->
-<audio id="bgMusic" loop>
+<audio id="bgMusic" loop playsinline>
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7c9b7a6c9c.mp3" type="audio/mpeg">
 </audio>
 
@@ -289,7 +289,6 @@
   yesBtn.addEventListener("click", () => {
     message.style.display = "block";
     carousel.style.display = "block";
-    music.play();
 
     for (let i = 0; i < 25; i++) {
       setTimeout(createHeart, i * 120);
