@@ -71,7 +71,7 @@
     }
 
     .message {
-      margin-top: 20px;
+      margin-top: 15px;
       font-size: 18px;
       color: #2a9d8f;
       display: none;
@@ -87,14 +87,90 @@
     }
 
     @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100vh) scale(1.5);
-        opacity: 0;
-      }
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    /* 🎠 Carousel */
+    .carousel {
+      position: relative;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .slides {
+      height: 220px;
+    }
+
+    .slide {
+      display: none;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide img {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    .slide p {
+      font-size: 14px;
+      color: #555;
+      margin-top: 6px;
+    }
+
+    .nav {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      background: rgba(230,57,70,0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .nav.left { left: 5px; }
+    .nav.right { right: 5px; }
+
+    /* 🎵 Music overlay */
+    #musicOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .overlay-content {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .overlay-content p {
+      color: #e63946;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .overlay-content button {
+      padding: 12px 25px;
+      border-radius: 25px;
+      border: none;
+      background: #e63946;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
     }
 
     @media (max-width: 380px) {
@@ -105,93 +181,156 @@
 </head>
 <body>
 
-  <!-- 🎵 Background Music -->
-  <audio id="bgMusic" loop>
+<!-- 🎵 Music -->
+<audio id="bgMusic" loop>
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7c9b7a6c9c.mp3" type="audio/mpeg">
-  </audio>
+</audio>
 
-  <div class="card">
-    <h1>Rushika ❤️</h1>
-    <p>Will you be my Valentine? 💖</p>
+<!-- 🎵 Music Unlock -->
+<div id="musicOverlay">
+  <div class="overlay-content">
+    <p>Tap to feel the love 💖</p>
+    <button id="startMusic">Start 💕</button>
+  </div>
+</div>
 
-    <div class="buttons" id="btnArea">
-      <button id="yesBtn">Yes 😍</button>
-      <button id="noBtn">No 🙄</button>
-    </div>
+<div class="card">
+  <h1>Rushika ❤️</h1>
+  <p>Will you be my Valentine? 💖</p>
 
-    <div class="message" id="message">
-      Yayyy! 💕<br>
-      I knew you’d say YES 😘<br>
-      Happy Valentine’s Day ❤️
-    </div>
+  <div class="buttons" id="btnArea">
+    <button id="yesBtn">Yes 😍</button>
+    <button id="noBtn">No 🙄</button>
   </div>
 
-  <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const btnArea = document.getElementById("btnArea");
-    const message = document.getElementById("message");
-    const music = document.getElementById("bgMusic");
+  <div class="message" id="message">
+    Yayyy! 💕<br>
+    I knew you’d say YES 😘
+  </div>
 
-    function moveNoButton() {
-      const areaW = btnArea.clientWidth;
-      const areaH = btnArea.clientHeight;
-      const noW = noBtn.offsetWidth;
-      const noH = noBtn.offsetHeight;
+  <!-- 🎠 Photo Carousel -->
+  <div class="carousel" id="carousel">
+    <button class="nav left" onclick="prevSlide()">❮</button>
 
-      const yesX = yesBtn.offsetLeft;
-      const yesY = yesBtn.offsetTop;
-      const yesW = yesBtn.offsetWidth;
-      const yesH = yesBtn.offsetHeight;
+    <div class="slides">
+      <div class="slide active">
+        <img src="photos/photo1.jpg">
+        <p>Our first memory ❤️</p>
+      </div>
+      <div class="slide">
+        <img src="photos/photo2.jpg">
+        <p>That smile I love 😊</p>
+      </div>
+      <div class="slide">
+        <img src="photos/photo3.jpg">
+        <p>Forever us 💕</p>
+      </div>
+    </div>
 
-      let x, y, safe = false;
+    <button class="nav right" onclick="nextSlide()">❯</button>
+  </div>
+</div>
 
-      while (!safe) {
-        x = Math.random() * (areaW - noW);
-        y = Math.random() * (areaH - noH);
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const btnArea = document.getElementById("btnArea");
+  const message = document.getElementById("message");
+  const carousel = document.getElementById("carousel");
+  const music = document.getElementById("bgMusic");
 
-        const overlap =
-          x + noW > yesX &&
-          x < yesX + yesW &&
-          y + noH > yesY &&
-          y < yesY + yesH;
+  function moveNoButton() {
+    const areaW = btnArea.clientWidth;
+    const areaH = btnArea.clientHeight;
+    const noW = noBtn.offsetWidth;
+    const noH = noBtn.offsetHeight;
 
-        if (!overlap) safe = true;
-      }
+    const yesX = yesBtn.offsetLeft;
+    const yesY = yesBtn.offsetTop;
+    const yesW = yesBtn.offsetWidth;
+    const yesH = yesBtn.offsetHeight;
 
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+    let x, y, safe = false;
+
+    while (!safe) {
+      x = Math.random() * (areaW - noW);
+      y = Math.random() * (areaH - noH);
+
+      const overlap =
+        x + noW > yesX &&
+        x < yesX + yesW &&
+        y + noH > yesY &&
+        y < yesY + yesH;
+
+      if (!overlap) safe = true;
     }
 
-    noBtn.addEventListener("mouseenter", moveNoButton);
-    noBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      moveNoButton();
-    });
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
 
-    function createHeart() {
-      const heart = document.createElement("div");
-      heart.classList.add("heart");
-      heart.innerText = "❤️";
-      heart.style.left = Math.random() * 100 + "vw";
-      heart.style.fontSize = (20 + Math.random() * 20) + "px";
-      document.body.appendChild(heart);
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    moveNoButton();
+  });
 
-      setTimeout(() => heart.remove(), 4000);
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = 20 + Math.random() * 20 + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 4000);
+  }
+
+  yesBtn.addEventListener("click", () => {
+    message.style.display = "block";
+    carousel.style.display = "block";
+    music.play();
+
+    for (let i = 0; i < 25; i++) {
+      setTimeout(createHeart, i * 120);
     }
+  });
 
-    yesBtn.addEventListener("click", () => {
-      message.style.display = "block";
+  document.getElementById("startMusic").onclick = () => {
+    music.play();
+    document.getElementById("musicOverlay").style.display = "none";
+  };
 
-      // 🎵 Play music (mobile-safe)
-      music.play();
+  /* Carousel logic */
+  let currentSlide = 0;
+  const slides = document.querySelectorAll(".slide");
 
-      // 💖 Heart burst
-      for (let i = 0; i < 30; i++) {
-        setTimeout(createHeart, i * 100);
-      }
-    });
-  </script>
+  function showSlide(i) {
+    slides.forEach(s => s.classList.remove("active"));
+    slides[i].classList.add("active");
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  /* Swipe support */
+  let startX = 0;
+  carousel.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  carousel.addEventListener("touchend", e => {
+    let endX = e.changedTouches[0].clientX;
+    if (startX - endX > 50) nextSlide();
+    if (endX - startX > 50) prevSlide();
+  });
+</script>
 
 </body>
 </html>
