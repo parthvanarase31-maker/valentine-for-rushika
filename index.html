@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Be My Valentine ❤️</title>
+
   <style>
     body {
       margin: 0;
@@ -21,17 +22,17 @@
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 320px;
     }
 
     h1 {
       color: #e63946;
-      margin-bottom: 20px;
     }
 
     .buttons {
       margin-top: 30px;
       position: relative;
-      height: 80px;
+      height: 120px;
     }
 
     button {
@@ -40,23 +41,23 @@
       border: none;
       border-radius: 25px;
       cursor: pointer;
-      transition: 0.3s;
+      position: absolute;
     }
 
     #yesBtn {
       background: #e63946;
       color: white;
-      margin-right: 15px;
-    }
-
-    #yesBtn:hover {
-      background: #d62839;
+      left: 40px;
+      top: 40px;
+      z-index: 2;
     }
 
     #noBtn {
       background: #adb5bd;
       color: #333;
-      position: absolute;
+      left: 180px;
+      top: 40px;
+      z-index: 1;
     }
 
     .message {
@@ -73,7 +74,7 @@
     <h1>Rushika ❤️</h1>
     <p>Will you be my Valentine? 💖</p>
 
-    <div class="buttons">
+    <div class="buttons" id="btnArea">
       <button id="yesBtn">Yes 😍</button>
       <button id="noBtn">No 🙄</button>
     </div>
@@ -88,16 +89,35 @@
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
+    const btnArea = document.getElementById("btnArea");
     const message = document.getElementById("message");
 
-    noBtn.style.left = "120px";
+    noBtn.addEventListener("mouseenter", () => {
+      const areaRect = btnArea.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
 
-    noBtn.addEventListener("mouseover", () => {
-      const x = Math.random() * 250;
-      const y = Math.random() * 60;
+      let newX, newY;
+      let safe = false;
 
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+      while (!safe) {
+        newX = Math.random() * (areaRect.width - noRect.width);
+        newY = Math.random() * (areaRect.height - noRect.height);
+
+        // Check overlap with YES button
+        const overlap =
+          newX + noRect.width > yesBtn.offsetLeft &&
+          newX < yesBtn.offsetLeft + yesBtn.offsetWidth &&
+          newY + noRect.height > yesBtn.offsetTop &&
+          newY < yesBtn.offsetTop + yesBtn.offsetHeight;
+
+        if (!overlap) {
+          safe = true;
+        }
+      }
+
+      noBtn.style.left = newX + "px";
+      noBtn.style.top = newY + "px";
     });
 
     yesBtn.addEventListener("click", () => {
